@@ -1,12 +1,18 @@
 import express, { type Express } from "express";
 import fs from "fs";
 import path from "path";
-import { createServer as createViteServer, createLogger } from "vite";
 import { type Server } from "http";
-import viteConfig from "../vite.config";
 import { nanoid } from "nanoid";
 
-const viteLogger = createLogger();
+const viteLogger = {
+  info: console.log,
+  warn: console.warn,
+  error: console.error,
+  warnOnce: console.warn,
+  clearScreen: () => {},
+  hasErrorLogged: () => false,
+  hasWarned: false,
+};
 
 export function log(message: string, source = "express") {
   const formattedTime = new Date().toLocaleTimeString("en-US", {
@@ -20,6 +26,12 @@ export function log(message: string, source = "express") {
 }
 
 export async function setupVite(app: Express, server: Server) {
+  // Dynamic imports for development-only dependencies
+  const { createServer: createViteServer, createLogger } = await import("vite");
+  const viteConfigModule = await import("../vite.config.js");
+  const viteConfig = viteConfigModule.default;
+  const devViteLogger = createLogger();
+
   const serverOptions = {
     middlewareMode: true,
     hmr: { server },
@@ -30,9 +42,9 @@ export async function setupVite(app: Express, server: Server) {
     ...viteConfig,
     configFile: false,
     customLogger: {
-      ...viteLogger,
+      ...devViteLogger,
       error: (msg, options) => {
-        viteLogger.error(msg, options);
+        devViteLogger.error(msg, options);
         process.exit(1);
       },
     },
@@ -68,12 +80,17 @@ export async function setupVite(app: Express, server: Server) {
 }
 
 export function serveStatic(app: Express) {
-  const distPath = path.resolve(import.meta.dirname, "public");
+  // In production on Vercel, the build files are served by Vercel's static hosting
+  // This function might not be needed in production, but if called, handle gracefully
+  const distPath = path.resolve(process.cwd(), "dist", "public");
 
   if (!fs.existsSync(distPath)) {
-    throw new Error(
-      `Could not find the build directory: ${distPath}, make sure to build the client first`,
-    );
+    log(`Build directory not found: ${distPath}, serving basic response`);
+    // Instead of throwing, serve a basic response
+    app.use("*", (_req, res) => {
+      res.status(200).send("WhatsApp Clone - Static files served by Vercel");
+    });
+    return;
   }
 
   app.use(express.static(distPath));
