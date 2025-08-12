@@ -6,8 +6,7 @@ export function useSocket() {
 
   useEffect(() => {
     // Connect to Socket.IO via Vercel serverless function
-    const socketInstance = io(window.location.origin, {
-      path: '/api/socket',
+    const socketInstance = io(window.location.origin + '/api/socket', {
       transports: ['websocket', 'polling']
     });
 
