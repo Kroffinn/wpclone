@@ -1,5 +1,5 @@
-// Vercel-compatible API endpoint with ES modules
-export default async function handler(req, res) {
+// Vercel-compatible API endpoint with CommonJS
+module.exports = async function handler(req, res) {
   console.log('Conversations API called - method:', req.method);
   console.log('URL:', req.url);
   
@@ -72,4 +72,4 @@ export default async function handler(req, res) {
     console.error('Error in conversations API:', error);
     res.status(500).json({ error: 'Internal server error', message: error.message });
   }
-}
+};

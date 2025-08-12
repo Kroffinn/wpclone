@@ -1,5 +1,5 @@
 // Simple API endpoint for Vercel
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   console.log('Health check API called');
   console.log('Environment check:', {
     nodeEnv: process.env.NODE_ENV,
