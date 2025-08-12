@@ -15,9 +15,14 @@ export default function Chat() {
   const socket = useSocket();
 
   // Fetch conversations
-  const { data: conversations = [], refetch: refetchConversations, isLoading: conversationsLoading } = useQuery<ConversationWithContact[]>({
+  const { data: conversations = [], refetch: refetchConversations, isLoading: conversationsLoading, error: conversationsError } = useQuery<ConversationWithContact[]>({
     queryKey: ["/api/conversations"],
   });
+
+  // Debug logging
+  console.log('Conversations loading:', conversationsLoading);
+  console.log('Conversations data:', conversations);
+  console.log('Conversations error:', conversationsError);
 
   // Fetch selected conversation with messages
   const { data: selectedConversation, refetch: refetchMessages, isLoading: messagesLoading } = useQuery<ConversationWithMessages>({
