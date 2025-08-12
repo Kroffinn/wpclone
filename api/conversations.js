@@ -15,7 +15,7 @@ async function connectToDatabase() {
 
   const client = new MongoClient(mongoUrl);
   await client.connect();
-  const db = client.db('whatsapp-clone');
+  const db = client.db('whatsapp');
 
   cachedClient = client;
   cachedDb = db;
@@ -45,7 +45,7 @@ export default async function handler(req, res) {
       },
       {
         $lookup: {
-          from: 'messages',
+          from: 'processed_messages',
           let: { conversationId: '$_id' },
           pipeline: [
             { $match: { $expr: { $eq: ['$conversationId', '$$conversationId'] } } },

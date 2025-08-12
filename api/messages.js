@@ -15,7 +15,7 @@ async function connectToDatabase() {
 
   const client = new MongoClient(mongoUrl);
   await client.connect();
-  const db = client.db('whatsapp-clone');
+  const db = client.db('whatsapp');
 
   cachedClient = client;
   cachedDb = db;
@@ -50,7 +50,7 @@ export default async function handler(req, res) {
     };
     
     const { db } = await connectToDatabase();
-    await db.collection('messages').insertOne(message);
+    await db.collection('processed_messages').insertOne(message);
     
     // Emit to Socket.IO if server is available
     if (res.socket?.server?.io) {
