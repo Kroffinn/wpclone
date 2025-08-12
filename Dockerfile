@@ -1,5 +1,5 @@
 # Multi-stage build for WhatsApp Clone
-FROM node:18-slim AS builder
+FROM node:20-slim AS builder
 
 # Set working directory
 WORKDIR /app
@@ -17,7 +17,7 @@ COPY . .
 RUN npm run build
 
 # Production stage
-FROM node:18-slim AS production
+FROM node:20-slim AS production
 
 WORKDIR /app
 
