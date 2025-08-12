@@ -1,12 +1,16 @@
 // Simple API endpoint for Vercel
-export default function handler(req, res) {
-  if (req.method === 'GET') {
-    res.json({ 
-      status: 'ok', 
-      message: 'WhatsApp Clone API is running',
-      timestamp: new Date().toISOString()
-    });
-  } else {
-    res.status(405).json({ message: 'Method not allowed' });
-  }
+export default async function handler(req, res) {
+  console.log('Health check API called');
+  console.log('Environment check:', {
+    nodeEnv: process.env.NODE_ENV,
+    hasMongoUri: !!process.env.MONGODB_URI,
+    mongoUriLength: process.env.MONGODB_URI ? process.env.MONGODB_URI.length : 0
+  });
+  
+  res.json({ 
+    message: 'WhatsApp Clone API is running!',
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV,
+    hasDatabase: !!process.env.MONGODB_URI
+  });
 }

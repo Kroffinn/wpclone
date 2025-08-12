@@ -10,9 +10,11 @@ async function connectToDatabase() {
 
   const mongoUrl = process.env.MONGODB_URI;
   if (!mongoUrl) {
+    console.error('MONGODB_URI environment variable not set');
     throw new Error('MONGODB_URI not configured');
   }
 
+  console.log('Connecting to MongoDB with URI length:', mongoUrl.length);
   const client = new MongoClient(mongoUrl);
   await client.connect();
   const db = client.db('whatsapp');
