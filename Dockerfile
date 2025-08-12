@@ -28,9 +28,11 @@ RUN apk add --no-cache dumb-init
 RUN addgroup -g 1001 -S nodejs
 RUN adduser -S nextjs -u 1001
 
-# Copy package files and install production dependencies only
+# Copy package files and install production dependencies + runtime tools
 COPY package*.json ./
-RUN npm ci --only=production && npm cache clean --force
+RUN npm ci --only=production && \
+    npm install cross-env tsx && \
+    npm cache clean --force
 
 # Copy built application
 COPY --from=builder --chown=nextjs:nodejs /app/dist ./dist
