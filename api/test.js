@@ -30,7 +30,7 @@ const testHtml = `
 </html>
 `;
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   res.setHeader('Content-Type', 'text/html');
   res.status(200).send(testHtml);
 };
