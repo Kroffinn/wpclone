@@ -9,7 +9,7 @@ import {
   type ConversationWithMessages
 } from "@shared/schema";
 import { randomUUID } from "crypto";
-import { MongoStorage } from "./mongo-storage";
+import { MongoStorage } from "./mongo-storage.js";
 
 export interface IStorage {
   // Contact operations
