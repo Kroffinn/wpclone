@@ -52,6 +52,11 @@ export default async function handler(req, res) {
     const { db } = await connectToDatabase();
     await db.collection('messages').insertOne(message);
     
+    // Emit to Socket.IO if server is available
+    if (res.socket?.server?.io) {
+      res.socket.server.io.to(`conversation-${conversationId}`).emit('new-message', message);
+    }
+    
     res.status(201).json(message);
   } catch (error) {
     console.error('Error creating message:', error);
