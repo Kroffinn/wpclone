@@ -24,12 +24,16 @@ async function connectToDatabase() {
 }
 
 export default async function handler(req, res) {
+  console.log('Conversations API called, method:', req.method);
+  
   if (req.method !== 'GET') {
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
   try {
+    console.log('Connecting to database...');
     const { db } = await connectToDatabase();
+    console.log('Database connected, fetching conversations...');
     
     const conversations = await db.collection('conversations').aggregate([
       {
@@ -60,9 +64,36 @@ export default async function handler(req, res) {
       }
     ]).toArray();
     
-    res.json(conversations);
+    console.log('Found conversations:', conversations.length);
+    
+    // Map MongoDB _id to id for frontend compatibility
+    const mappedConversations = conversations.map(conv => ({
+      id: conv._id.toString(),
+      contactId: conv.contactId,
+      unreadCount: conv.unreadCount || 0,
+      updatedAt: conv.updatedAt,
+      contact: {
+        id: conv.contact._id.toString(),
+        waId: conv.contact.waId,
+        name: conv.contact.name,
+        phone: conv.contact.phone,
+        avatar: conv.contact.avatar,
+        lastSeen: conv.contact.lastSeen,
+        createdAt: conv.contact.createdAt
+      },
+      lastMessage: conv.lastMessage && conv.lastMessage.length > 0 ? {
+        id: conv.lastMessage[0]._id.toString(),
+        conversationId: conv.lastMessage[0].conversationId,
+        content: conv.lastMessage[0].content,
+        sender: conv.lastMessage[0].sender,
+        timestamp: conv.lastMessage[0].timestamp,
+        status: conv.lastMessage[0].status
+      } : null
+    }));
+    
+    res.json(mappedConversations);
   } catch (error) {
     console.error('Error fetching conversations:', error);
-    res.status(500).json({ message: 'Failed to fetch conversations' });
+    res.status(500).json({ message: 'Failed to fetch conversations', error: error.message });
   }
 }

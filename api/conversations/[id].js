@@ -60,8 +60,31 @@ export default async function handler(req, res) {
 
       // Combine conversation with messages
       const result = {
-        ...conversation[0],
-        messages: messages
+        id: conversation[0]._id.toString(),
+        contactId: conversation[0].contactId,
+        unreadCount: conversation[0].unreadCount || 0,
+        updatedAt: conversation[0].updatedAt,
+        contact: {
+          id: conversation[0].contact._id.toString(),
+          waId: conversation[0].contact.waId,
+          name: conversation[0].contact.name,
+          phone: conversation[0].contact.phone,
+          avatar: conversation[0].contact.avatar,
+          lastSeen: conversation[0].contact.lastSeen,
+          createdAt: conversation[0].contact.createdAt
+        },
+        messages: messages.map(msg => ({
+          id: msg._id.toString(),
+          conversationId: msg.conversationId,
+          waMessageId: msg.waMessageId,
+          metaMsgId: msg.metaMsgId,
+          content: msg.content,
+          messageType: msg.messageType,
+          sender: msg.sender,
+          status: msg.status,
+          timestamp: msg.timestamp,
+          createdAt: msg.createdAt
+        }))
       };
 
       res.json(result);
