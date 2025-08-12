@@ -7,7 +7,7 @@ import {
   type InsertMessage,
   type ConversationWithContact,
   type ConversationWithMessages
-} from "@shared/schema";
+} from "../shared/schema.js";
 import { randomUUID } from "crypto";
 import { MongoStorage } from "./mongo-storage.js";
 

@@ -9,7 +9,7 @@ import type {
   InsertMessage,
   ConversationWithContact,
   ConversationWithMessages 
-} from '@shared/schema';
+} from '../shared/schema.js';
 
 export class MongoStorage implements IStorage {
   private client: MongoClient;
